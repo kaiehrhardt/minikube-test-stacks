@@ -1,0 +1,109 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+vars:
+  TOOLS: minikube,yq,helm,mc,kubectl
+  INIT_TOKEN: suuuper-s3cret-token
+  CPU: 4
+  MEM: 8
+
+includes:
+  gitlab: ./gitlab
+  tekton: ./tekton
+
+tasks:
+
+  default:
+    desc: list all tasks
+    cmds:
+      - cmd: task --list-all
+    silent: true
+
+  test-req:
+    desc: check all used tools for availability
+    vars:
+      GREEN: '\e[0;32m'
+      RED: '\e[0;31m'
+      NC: '\e[0m'
+    cmds:
+      - for: { var: TOOLS, split: "," }
+        cmd: '[ $(which {{ .ITEM }}) ] && echo -e "install {{ .ITEM }} {{ .GREEN }}ok{{ .NC }}" || echo -e "install {{ .ITEM }} {{ .RED }}nok{{ .NC }}"'
+    silent: true
+
+  # high level target
+  start-mini:
+    desc: start minikube
+    cmds:
+      - minikube start --cpus {{ .CPU }} --memory {{ .MEM }}g --addons ingress
+
+  # high level target
+  rm-mini:
+    desc: remove minikube
+    cmds:
+      - minikube delete
+
+  # high level target
+  deploy-gitlab:
+    desc: deploy latest gitlab without any config
+    cmds:
+      - task: test-req
+      - task: start-mini
+      - task: gitlab:fix-ips
+      - task: gitlab:helm
+      - task: gitlab:get-creds
+      - task: gitlab:wait-for
+
+  initial-token:
+    internal: true
+    cmds:
+      - |
+        kubectl exec -it $(kubectl get pods -lapp=toolbox -oname) -- /srv/gitlab/bin/rails runner "token = User.find_by_username('root').personal_access_tokens.create(scopes: [:api], name: 'Automation token', expires_at: 365.days.from_now); token.set_token('{{ .INIT_TOKEN }}'); token.save!"
+
+  usecase-backup-init:
+    desc: usecase backup initial config (mc config set, create automation token for terraform, configure gitlab)
+    cmds:
+      - task: gitlab:backup:set-mc-config
+      - task: initial-token
+      - task: gitlab:backup:configure-gitlab
+
+  usecase-backup-create:
+    desc: usecase backup create backup
+    cmds:
+      - task: gitlab:backup:backup-rails-secret
+      - task: gitlab:backup:create-backup
+
+  # high level target
+  usecase-backup:
+    desc: usecase backup init, create and download backup
+    cmds:
+      - task: usecase-backup-init
+      - task: usecase-backup-create
+      - task: gitlab:backup:get-backup
+
+  # high level target
+  usecase-backup-restore:
+    desc: usecase backup restore backup
+    cmds:
+      - task: gitlab:backup:restore-rails-secret
+      - task: gitlab:backup:put-backup
+      - task: gitlab:backup:restore-backup
+
+  deploy-tekton:
+    desc: deploy tekton crds and dashboard
+    cmds:
+      - task: tekton:fix-ips
+      - task: tekton:install
+
+  config-tekton:
+    desc: config for tekton webhook usecase
+    cmds:
+      - task: tekton:el
+      - task: initial-token
+      - task: tekton:configure-gitlab
+
+  # high level target
+  full-usecase-tekton:
+    desc: full tekton usecase with gitlab deployment
+    cmds:
+      - task: deploy-gitlab
+      - task: config-tekton

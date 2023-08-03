@@ -1,0 +1,20 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: gitlab-bindings
+spec:
+  params:
+  - name: gitref
+    value: $(body.ref)
+  - name: gitsha
+    value: $(body.checkout_sha)
+  - name: gitrepositoryurl
+    value: $(body.repository.url)
+  - name: gitprojectpath
+    value: $(body.project.path_with_namespace)
+  - name: gitdefaultbranch
+    value: $(body.project.default_branch)
+  - name: gitprojectid
+    value: $(body.project.id)
+  - name: contenttype
+    value: $(header.Content-Type)

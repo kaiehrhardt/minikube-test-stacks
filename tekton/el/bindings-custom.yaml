@@ -1,0 +1,10 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerBinding
+metadata:
+  name: gitlab-bindings-custom
+spec:
+  params:
+  - name: truncatedsha
+    value: $(extensions.truncated_sha)
+  - name: branch
+    value: $(extensions.branch_name)

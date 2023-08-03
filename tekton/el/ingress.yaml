@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: el-gitlab-ingress
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: trigger.192.168.49.2.nip.io
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: el-gitlab-listener
+                port:
+                  number: 8080

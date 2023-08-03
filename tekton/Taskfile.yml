@@ -1,0 +1,45 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+tasks:
+  install:
+    internal: true
+    cmds:
+      - kubectl apply --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+      - kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+      - kubectl apply --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+      - kubectl apply --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
+      - kubectl apply --filename ./tekton/dashboard/ingress.yaml
+
+  remove:
+    desc: remove all tekton files
+    cmds:
+      - kubectl delete --filename https://storage.googleapis.com/tekton-releases/pipeline/latest/release.yaml
+      - kubectl delete --filename https://storage.googleapis.com/tekton-releases/triggers/latest/release.yaml
+      - kubectl delete --filename https://storage.googleapis.com/tekton-releases/triggers/latest/interceptors.yaml
+      - kubectl delete --filename https://storage.googleapis.com/tekton-releases/dashboard/latest/release.yaml
+      - kubectl delete --filename ./tekton/dashboard/ingress.yaml
+
+  fix-ips:
+    internal: true
+    vars:
+      MINIKUBE_IP:
+        sh: minikube ip
+    cmds:
+      - yq -i '.spec.rules[0].host = "trigger.{{ .MINIKUBE_IP }}.nip.io"' tekton/el/ingress.yaml
+      - yq -i '.spec.rules[0].host = "tkn-dashboard.{{ .MINIKUBE_IP }}.nip.io"' tekton/dashboard/ingress.yaml
+
+  configure-gitlab:
+    internal: true
+    vars:
+      MINIKUBE_IP:
+        sh: minikube ip
+    dir: tekton/gitlab-config
+    cmds:
+      - terraform init
+      - terraform apply  -var gitlab_token={{ .INIT_TOKEN }} -var minikubeip={{ .MINIKUBE_IP }} -auto-approve
+
+  el:
+    internal: true
+    cmds:
+      - kubectl apply --filename tekton/el/

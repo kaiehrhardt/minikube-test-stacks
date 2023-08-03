@@ -1,0 +1,4 @@
+*tfstate*
+.terraform*
+*.tar
+gitlab-secrets.yml

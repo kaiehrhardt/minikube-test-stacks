@@ -1,0 +1,34 @@
+apiVersion: triggers.tekton.dev/v1beta1
+kind: TriggerTemplate
+metadata:
+  name: gitlab-repo-print
+spec:
+  params:
+    - name: gitref
+    - name: gitsha
+    - name: gitrepositoryurl
+    - name: gitprojectpath
+    - name: gitdefaultbranch
+    - name: gitprojectid
+    - name: contenttype
+    - name: truncatedsha
+    - name: branch
+  resourcetemplates:
+    - apiVersion: tekton.dev/v1beta1
+      kind: TaskRun
+      metadata:
+        generateName: gitlab-taskrun-
+      spec:
+        taskSpec:
+          steps:
+            - image: alpine
+              script: |
+                echo "Revision is : $(tt.params.gitref)."
+                echo "Sha is $(tt.params.gitsha)"
+                echo "RepoURL is $(tt.params.gitrepositoryurl)"
+                echo "ProjectPath is $(tt.params.gitprojectpath)"
+                echo "ProjectID is $(tt.params.gitprojectid)"
+                echo "DefaultBranch is $(tt.params.gitdefaultbranch)"
+                echo "Webhook Contenttype is $(tt.params.contenttype)"
+                echo "TruncatedSha is $(tt.params.truncatedsha)"
+                echo "Branch is $(tt.params.branch)"
