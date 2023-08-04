@@ -2,3 +2,4 @@
 .terraform*
 *.tar
 gitlab-secrets.yml
+*.pem
