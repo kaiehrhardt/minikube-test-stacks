@@ -10,6 +10,9 @@ vars:
 includes:
   gitlab: ./gitlab
   tekton: ./tekton
+  runner:
+    taskfile: ./gitlab-com-runner/Taskfile.yml
+    dir: ./gitlab-com-runner
 
 tasks:
 
@@ -107,3 +110,19 @@ tasks:
     cmds:
       - task: deploy-gitlab
       - task: config-tekton
+
+  # high level target
+  deploy-runner:
+    desc: gitlab.com runner selfhosted in minikube
+    cmds:
+      - task: test-req
+      - task: start-mini
+      - task: runner:config
+      - task: runner:install
+
+  # high level target
+  remove-runner:
+    desc: remove gitlab.com runner
+    cmds:
+      - task: runner:uninstall
+      - task: rm-mini

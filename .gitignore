@@ -3,3 +3,4 @@
 *.tar
 gitlab-secrets.yml
 *.pem
+token.txt

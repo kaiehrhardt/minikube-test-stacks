@@ -1,0 +1,21 @@
+gitlabUrl: https://gitlab.com
+unregisterRunners: true
+imagePullPolicy: Always
+runners:
+  secret: runner-token
+  runUntagged: true
+  tags: local
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        image = "alpine:latest"
+rbac:
+  create: true
+checkInterval: 20
+resources:
+  limits:
+    memory: 256Mi
+    cpu: 200m
+  requests:
+    memory: 128Mi
+    cpu: 100m

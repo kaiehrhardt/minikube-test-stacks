@@ -1,0 +1,22 @@
+# yaml-language-server: $schema=https://taskfile.dev/schema.json
+version: '3'
+
+vars:
+  NS: "runner"
+
+tasks:
+  config:
+    desc: create runner secret
+    cmds:
+      - kubectl create ns {{ .NS }}
+      - 'read -p "gitlab.com runner token: " TOKEN && echo $TOKEN > ./token.txt'
+      - kubectl -n {{ .NS }} create secret generic runner-token --from-file=runner-registration-token=./token.txt --from-literal=runner-token=""
+  install:
+    desc: deploy runner
+    cmds:
+      - helm upgrade -n {{ .NS }} -i runner gitlab/gitlab-runner -f ./values.yml
+  uninstall:
+    desc: remove runner
+    cmds:
+      - helm uninstall -n {{ .NS }} runner
+      - kubectl delete ns {{ .NS }}
