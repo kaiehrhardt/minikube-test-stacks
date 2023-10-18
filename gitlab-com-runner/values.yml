@@ -2,7 +2,6 @@ gitlabUrl: https://gitlab.com
 unregisterRunners: true
 imagePullPolicy: Always
 runners:
-  secret: runner-token
   runUntagged: true
   tags: local
   config: |

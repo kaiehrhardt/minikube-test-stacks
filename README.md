@@ -2,19 +2,20 @@
 
 A collection of multiple stacks to test new features or try out the technology.
 
+## requirements
+
+- terraform
+
+## available modules
+
+- minikube local docker bootstrap (to get a local cluster)
+
 ## available stacks
 
 - gitlab
-  - backup usecase
-- tekton
-  - gitlab webhook / eventlistener usecase
-- backstage
 - gitlab.com runner
+<!-- - tekton
+  - gitlab webhook / eventlistener usecase -->
+- backstage
 
-## tasks
 
-check available tasks with
-
-```bash
-task
-```

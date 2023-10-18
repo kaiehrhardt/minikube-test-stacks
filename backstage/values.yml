@@ -59,7 +59,7 @@ ingress:
   enabled: true
 
   # -- Name of the IngressClass cluster resource which defines which controller will implement the resource (e.g nginx)
-  className: ""
+  className: "nginx"
 
   # -- Additional annotations for the Ingress resource
   annotations: {}
@@ -211,7 +211,7 @@ backstage:
   # -- Generates ConfigMap and configures it in the Backstage pods
   appConfig:
     app:
-      title: SVA Backstage App
+      title: Backstage App
       baseUrl: https://backstage.192.168.49.2.nip.io
     backend:
       baseUrl: https://backstage.192.168.49.2.nip.io
@@ -235,7 +235,7 @@ backstage:
         - type: file
           target: template.yaml # Backstage will expect the file to be in packages/backend/template.yaml
     organization:
-      name: SVA
+      name: minikube-test-env
     techdocs:
       builder: 'local' # Alternatives - 'external'
       generator:
