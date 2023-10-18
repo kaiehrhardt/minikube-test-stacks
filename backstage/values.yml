@@ -65,7 +65,7 @@ ingress:
   annotations: {}
 
   # -- Hostname to be used to expose the route to access the backstage application (e.g: backstage.IP.nip.io)
-  host: "backstage.192.168.49.2.nip.io"
+  host: "tf-override"
 
   # -- Ingress TLS parameters
   tls:
@@ -212,9 +212,9 @@ backstage:
   appConfig:
     app:
       title: Backstage App
-      baseUrl: https://backstage.192.168.49.2.nip.io
+      baseUrl: tf-override
     backend:
-      baseUrl: https://backstage.192.168.49.2.nip.io
+      baseUrl: tf-override
       listen:
         port: 7007
       database:
@@ -245,7 +245,7 @@ backstage:
     csp:
       connect-src: ["'self'", 'http:', 'https:']
     cors:
-      origin: https://backstage.192.168.49.2.nip.io
+      origin: tf-override
       methods: [GET, HEAD, PATCH, POST, PUT, DELETE]
       credentials: true
 

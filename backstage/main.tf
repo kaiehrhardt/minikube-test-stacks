@@ -16,6 +16,11 @@ provider "helm" {
   }
 }
 
+locals {
+  fqdn = "${module.mk.ip}.nip.io"
+  url = "https://${module.mk.ip}.nip.io"
+}
+
 module "mk" {
   source = "../modules/minikube"
 }
@@ -28,7 +33,7 @@ resource "tls_self_signed_cert" "cert" {
   private_key_pem = tls_private_key.cert_key.private_key_pem
 
   subject {
-    common_name  = "backstage.192.168.49.2.nip.io"
+    common_name  = local.fqdn
   }
 
   validity_period_hours = 12
@@ -68,4 +73,19 @@ resource "helm_release" "backstage" {
   values = [
     "${file("values.yml")}"
   ]
+
+  set {
+    name  = "ingress.host"
+    value = local.fqdn
+  }
+
+  set {
+    name  = "backstage.appConfig.app.baseUrl"
+    value = local.url
+  }
+
+  set {
+    name  = "backstage.appConfig.cors.origin"
+    value = local.url
+  }
 }
