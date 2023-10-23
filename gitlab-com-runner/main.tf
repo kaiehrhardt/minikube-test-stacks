@@ -43,7 +43,7 @@ resource "helm_release" "gitlab_runner" {
   namespace        = kubernetes_namespace_v1.gitlab_runner.metadata[0].name
   repository       = "https://charts.gitlab.io/"
   chart            = "gitlab-runner"
-  version          = "0.57.1"
+  version          = "0.58.0"
 
   values = [
     "${file("values.yml")}"
