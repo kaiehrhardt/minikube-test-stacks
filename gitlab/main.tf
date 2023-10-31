@@ -19,37 +19,14 @@ resource "helm_release" "gitlab" {
   repository       = "https://charts.gitlab.io/"
   chart            = "gitlab"
   version          = "7.5.0"
-  timeout          = "720"
+  timeout          = "1800"
 
-  values = [<<EOT
-    global:
-      ingress:
-        configureCertmanager: false
-        class: "nginx"
-      hosts:
-        domain: ${module.mk.ip}.nip.io
-        externalIP: "${module.mk.ip}"
-      kas:
-        enabled: false
-    certmanager:
-      install: false
-    nginx-ingress:
-      enabled: false
-    registry:
-      enabled: false
-    prometheus:
-      install: false
-    gitlab:
-      webservice:
-        minReplicas: 1
-        maxReplicas: 1
-      sidekiq:
-        minReplicas: 1
-        maxReplicas: 1
-      gitlab-shell:
-        enabled: false
-    gitlab-runner:
-      certsSecretName: gitlab-wildcard-tls-chain
-  EOT
+  values = [
+    templatefile("./values.tftpl.yaml", { ip = module.mk.ip })
   ]
+}
+
+# output used for testing
+output "ip" {
+  value = module.mk.ip
 }
