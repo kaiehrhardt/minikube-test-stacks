@@ -19,7 +19,7 @@ resource "helm_release" "gitlab" {
   repository       = "https://charts.gitlab.io/"
   chart            = "gitlab"
   version          = "7.5.0"
-  timeout          = "720"
+  timeout          = "1800"
 
   values = [<<EOT
     global:
