@@ -1,0 +1,28 @@
+global:
+  ingress:
+    configureCertmanager: false
+    class: "nginx"
+  hosts:
+    domain: ${ip}.nip.io
+    externalIP: "${ip}"
+kas:
+  enabled: false
+certmanager:
+  install: false
+nginx-ingress:
+  enabled: false
+registry:
+  enabled: false
+prometheus:
+  install: false
+gitlab:
+  webservice:
+    minReplicas: 1
+    maxReplicas: 1
+  sidekiq:
+    minReplicas: 1
+    maxReplicas: 1
+  gitlab-shell:
+    enabled: false
+gitlab-runner:
+  certsSecretName: gitlab-wildcard-tls-chain
