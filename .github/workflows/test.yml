@@ -1,0 +1,16 @@
+name: stack test
+on:
+  pull_request:
+    branches: ["master"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: test
+        uses: "infinite-automations/terraform-all-in-one@v1"
+        with:
+          plan: false
+          test: true
+          directory: "./gitlab"
+          test-directory: "./gitlab"
