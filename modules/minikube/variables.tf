@@ -1,5 +1,5 @@
 variable "kubernetes_version" {
-  default = "v1.27.3"
+  default = "v1.27.7"
   type    = string
 }
 
