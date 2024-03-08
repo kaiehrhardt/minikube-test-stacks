@@ -63,7 +63,7 @@ resource "helm_release" "backstage" {
   namespace        = kubernetes_namespace_v1.backstage.metadata[0].name
   repository       = "https://backstage.github.io/charts"
   chart            = "backstage"
-  version          = "1.9.1"
+  version          = "1.9.2"
 
   values = [
     "${file("values.yml")}"
