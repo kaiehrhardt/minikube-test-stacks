@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: test
+      - name: test gitlab
         uses: "infinite-automations/terraform-all-in-one@v1"
         with:
           plan: false

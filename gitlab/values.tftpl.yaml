@@ -5,8 +5,8 @@ global:
   hosts:
     domain: ${ip}.nip.io
     externalIP: "${ip}"
-kas:
-  enabled: false
+  kas:
+    enabled: false
 certmanager:
   install: false
 nginx-ingress:

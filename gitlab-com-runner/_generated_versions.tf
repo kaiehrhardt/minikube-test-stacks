@@ -1,11 +1,10 @@
+// TERRAMATE: GENERATED AUTOMATICALLY DO NOT EDIT
+
 terraform {
   required_version = ">= 1.0"
-
+}
+terraform {
   required_providers {
-    minikube = {
-      source  = "scott-the-programmer/minikube"
-      version = ">= 0.3.4"
-    }
     helm = {
       source  = "hashicorp/helm"
       version = ">= 2.11.0"
@@ -13,6 +12,10 @@ terraform {
     kubernetes = {
       source  = "hashicorp/kubernetes"
       version = ">= 2.23.0"
+    }
+    minikube = {
+      source  = "scott-the-programmer/minikube"
+      version = ">= 0.3.4"
     }
   }
 }
