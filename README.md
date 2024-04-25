@@ -4,6 +4,7 @@ A collection of multiple stacks to test new features or try out the technology.
 
 ## requirements
 
+- terramate
 - terraform
 
 ## available modules
@@ -13,9 +14,12 @@ A collection of multiple stacks to test new features or try out the technology.
 ## available stacks
 
 - gitlab
+  - `terramate script run deploy gitlab`
+  - `terramate script run destroy gitlab`
 - gitlab.com runner
+  - `terramate script run deploy runner`
+  - `terramate script run destroy runner`
 <!-- - tekton
   - gitlab webhook / eventlistener usecase -->
-- backstage
 
 
