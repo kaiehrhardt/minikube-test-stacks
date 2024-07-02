@@ -2,8 +2,12 @@ provider "minikube" {
   kubernetes_version = var.kubernetes_version
 }
 
+data "external" "check_driver" {
+  program = ["bash", "${path.module}/check-driver.sh"]
+}
+
 resource "minikube_cluster" "cluster" {
-  driver       = var.driver
+  driver       = data.external.check_driver.result.driver
   cluster_name = var.clustername
   cpus         = var.cpus
   memory       = var.memory
