@@ -9,7 +9,7 @@ provider "helm" {
   }
 }
 module "mk" {
-  driver = ""
+  driver = "docker"
   source = "../modules/minikube"
 }
 output "ip" {

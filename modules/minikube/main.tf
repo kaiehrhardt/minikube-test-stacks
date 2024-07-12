@@ -7,7 +7,7 @@ data "external" "check_driver" {
 }
 
 resource "minikube_cluster" "cluster" {
-  driver       = data.external.check_driver.result.driver
+  driver       = var.driver != "" ? var.driver : data.external.check_driver.result.driver
   cluster_name = var.clustername
   cpus         = var.cpus
   memory       = var.memory

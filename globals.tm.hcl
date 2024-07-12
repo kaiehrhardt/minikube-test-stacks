@@ -12,3 +12,6 @@ globals "terraform" "provider" "helm" {
   version = ">= 2.11.0"
 }
 
+globals {
+  driver = ""
+}

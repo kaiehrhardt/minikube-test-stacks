@@ -9,6 +9,7 @@ provider "helm" {
   }
 }
 module "mk" {
+  driver = ""
   source = "../modules/minikube"
 }
 output "ip" {

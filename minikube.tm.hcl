@@ -11,6 +11,8 @@ generate_hcl "_generated_main.tf" {
     }
     module "mk" {
       source = "../modules/minikube"
+
+      driver = global.driver
     }
 
     # output used for testing

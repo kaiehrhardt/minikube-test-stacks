@@ -24,6 +24,6 @@ variable "addons" {
 }
 
 variable "driver" {
-  default = "docker"
+  default = ""
   type    = string
 }
