@@ -19,6 +19,9 @@ A collection of multiple stacks to test new features or try out the technology.
 - gitlab.com runner
   - `terramate script run deploy runner`
   - `terramate script run destroy runner`
+- kubeai
+  - `terramate script run deploy kubeai`
+  - `terramate script run destroy kubeai`
 <!-- - tekton
   - gitlab webhook / eventlistener usecase -->
 

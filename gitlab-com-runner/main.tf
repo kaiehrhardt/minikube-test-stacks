@@ -1,11 +1,3 @@
-provider "kubernetes" {
-  host = module.mk.host
-
-  client_certificate     = module.mk.client_certificate
-  client_key             = module.mk.client_key
-  cluster_ca_certificate = module.mk.cluster_ca_certificate
-}
-
 resource "kubernetes_namespace_v1" "gitlab_runner" {
   metadata {
     name = "gitlab-runner"

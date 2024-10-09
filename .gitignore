@@ -5,3 +5,4 @@ gitlab-secrets.yml
 *.pem
 *.key
 token.txt
+charts
