@@ -1,0 +1,13 @@
+all:
+  # Enable all models instead of enabling them one-by-one via .catalog.<name>.enabled
+  enabled: false
+
+catalog:
+  # Gemma #
+  gemma2-2b-cpu:
+    enabled: true
+    features: ["TextGeneration"]
+    owner: google
+    url: "ollama://gemma2:2b"
+    engine: OLlama
+    resourceProfile: cpu:1

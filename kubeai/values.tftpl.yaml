@@ -1,0 +1,278 @@
+# Default values for kubeai.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+secrets:
+  huggingface:
+    create: true
+    token: ""
+    # The name of the secret to use.
+    # If not set, and create is true, the name is generated using the fullname template.
+    # The token value is pulled from the key, "token".
+    name: ""
+
+modelServers:
+  VLLM:
+    images:
+      # The key is the image name (referenced from resourceProfiles) and the value is the image.
+      # The "default" image should always be specified.
+      # "default" is used when no imageName is specified or if a specific image is not found.
+      default: "vllm/vllm-openai:v0.6.2"
+      cpu: "substratusai/vllm:v0.6.1-cpu"
+      nvidia-gpu: "vllm/vllm-openai:v0.6.2"
+      google-tpu: "substratusai/vllm:v0.6.1-tpu"
+  OLlama:
+    images:
+      default: "ollama/ollama:latest"
+  FasterWhisper:
+    images:
+      default: "fedirz/faster-whisper-server:latest-cpu"
+      nvidia-gpu: "fedirz/faster-whisper-server:latest-cuda"
+  Infinity:
+    images:
+      default: "michaelf34/infinity:latest"
+
+modelServerPods:
+  # Security Context for the model pods
+  # Needed for OpenShift
+  securityContext:
+    runAsUser: 0
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+
+modelRollouts:
+  # The number of replicas to add when rolling out a new model.
+  surge: 1
+
+resourceProfiles:
+  cpu:
+    imageName: "cpu"
+    requests:
+      cpu: 1
+      # TODO: Consider making this a ratio that is more common on cloud machines
+      # such as 1:4 CPU:Mem. NOTE: This might need to be adjusted for local clusters.
+      memory: "2Gi"
+      # TODO: Consider adding eph storage requests/limits.
+      # Perhaps this is just needed for GKE Autopilot which defaults
+      # to 1Gi for CPU-only.
+      # ephemeral-storage: "2Gi"
+  nvidia-gpu-l4:
+    imageName: "nvidia-gpu"
+    limits:
+      nvidia.com/gpu: "1"
+    requests:
+      nvidia.com/gpu: "1"
+      cpu: "6"
+      memory: "24Gi"
+    tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+  nvidia-gpu-h100:
+    imageName: "nvidia-gpu"
+    limits:
+      nvidia.com/gpu: "1"
+    tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+  nvidia-gpu-a100-80gb:
+    imageName: "nvidia-gpu"
+    limits:
+      nvidia.com/gpu: "1"
+    tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+  nvidia-gpu-a100-40gb:
+    imageName: "nvidia-gpu"
+    limits:
+      nvidia.com/gpu: "1"
+    tolerations:
+      - key: "nvidia.com/gpu"
+        operator: "Equal"
+        value: "present"
+        effect: "NoSchedule"
+
+modelAutoscaling:
+  # Interval that the autoscaler will scrape model server metrics.
+  # and calculate the desired number of replicas.
+  interval: 10s
+  # Time window the autoscaling algorithm will consider when calculating
+  # the desired number of replicas.
+  timeWindow: 1m
+  # The name of the ConfigMap that stores the state of the autoscaler.
+  # Defaults to "{fullname}-autoscaler-state".
+  stateConfigMapName: ""
+
+messaging:
+  errorMaxBackoff: 30s
+  streams: []
+
+# Configure the openwebui subchart.
+openwebui:
+  fullnameOverride: "openwebui"
+  image:
+    tag: v0.3.19
+  env:
+  - name: WEBUI_AUTH
+    value: "False"
+  - name: OPENAI_API_KEYS
+    value: "not-used"
+  # - name: OPENAI_API_BASE_URL
+  #  # TODO: This changes with .fullnameOverride and .service.port, make this more robust.
+  #  value: "http://kubeai/openai/v1"
+  - name: OPENAI_API_BASE_URLS
+    # TODO: This changes with .fullnameOverride and .service.port, make this more robust.
+    value: "http://kubeai/openai/v1"
+  # A good number of features are not compatible with the KubeAI architecture.
+  - name: ENABLE_OLLAMA_API
+    value: "false"
+  - name: SHOW_ADMIN_DETAILS
+    value: "false"
+  - name: SAFE_MODE
+    value: "true"
+  - name: ENABLE_LITELLM
+    value: "false"
+  # Security Context for the openwebui pod
+  # Needed for OpenShift
+  securityContext:
+    runAsUser: 0
+    readOnlyRootFilesystem: false
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+  ingress:
+    enabled: true
+    className: "nginx"
+    hosts:
+      - host: openwebui.${ip}.nip.io
+        paths:
+          - path: /
+            pathType: ImplementationSpecific
+
+replicaCount: 1
+
+image:
+  repository: substratusai/kubeai
+  pullPolicy: IfNotPresent
+  # Overrides the image tag whose default is the chart appVersion.
+  tag: ""
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "kubeai"
+
+command:
+- /app/manager
+
+args: []
+
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+modelServiceAccount:
+  # Specifies whether a service account should be created to be used by model pods
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  runAsNonRoot: true
+  # fsGroup: 2000
+
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  # readOnlyRootFilesystem: true
+  # runAsUser: 1000
+
+service:
+  type: ClusterIP
+  port: 80
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+    # kubernetes.io/ingress.class: nginx
+    # kubernetes.io/tls-acme: "true"
+  rules:
+    - host: kubeai.example.com
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+  #  - secretName: chart-example-tls
+  #    hosts:
+  #      - chart-example.local
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+livenessProbe:
+  httpGet:
+    path: /healthz
+    port: 8081
+  initialDelaySeconds: 120
+  periodSeconds: 20
+
+readinessProbe:
+  httpGet:
+    path: /readyz
+    port: 8081
+  initialDelaySeconds: 5
+  periodSeconds: 10
+
+# Additional volumes on the output Deployment definition.
+volumes: []
+# - name: foo
+#   secret:
+#     secretName: mysecret
+#     optional: false
+
+# Additional volumeMounts on the output Deployment definition.
+volumeMounts: []
+# - name: foo
+#   mountPath: "/etc/foo"
+#   readOnly: true
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+

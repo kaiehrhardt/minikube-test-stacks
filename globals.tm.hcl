@@ -12,3 +12,7 @@ globals "terraform" "provider" "helm" {
   version = ">= 2.11.0"
 }
 
+globals "terraform" "provider" "kubernetes" {
+  source = "hashicorp/kubernetes"
+  version = ">= 2.32.0"
+}
