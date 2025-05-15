@@ -4,7 +4,7 @@ resource "helm_release" "gitlab" {
   create_namespace = true
   repository       = "https://charts.gitlab.io/"
   chart            = "gitlab"
-  version          = "8.11.2"
+  version          = "9.0.0"
   timeout          = "1800"
 
   values = [
