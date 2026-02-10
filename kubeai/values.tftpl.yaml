@@ -17,10 +17,9 @@ modelServers:
       # The key is the image name (referenced from resourceProfiles) and the value is the image.
       # The "default" image should always be specified.
       # "default" is used when no imageName is specified or if a specific image is not found.
-      default: "vllm/vllm-openai:v0.6.2"
-      cpu: "substratusai/vllm:v0.6.1-cpu"
-      nvidia-gpu: "vllm/vllm-openai:v0.6.2"
-      google-tpu: "substratusai/vllm:v0.6.1-tpu"
+      default: "vllm/vllm-openai:v0.6.3.post1"
+      cpu: "substratusai/vllm:v0.6.3.post1-cpu"
+      google-tpu: "substratusai/vllm:v0.6.3.post1-tpu"
   OLlama:
     images:
       default: "ollama/ollama:latest"
@@ -31,6 +30,10 @@ modelServers:
   Infinity:
     images:
       default: "michaelf34/infinity:latest"
+
+modelLoaders:
+  huggingface:
+    image: "substratusai/huggingface-model-loader:v0.9.0"
 
 modelServerPods:
   # Security Context for the model pods
@@ -59,6 +62,7 @@ resourceProfiles:
       # Perhaps this is just needed for GKE Autopilot which defaults
       # to 1Gi for CPU-only.
       # ephemeral-storage: "2Gi"
+      cacheProfile: standard-filestore
   nvidia-gpu-l4:
     imageName: "nvidia-gpu"
     limits:
@@ -99,6 +103,11 @@ resourceProfiles:
         operator: "Equal"
         value: "present"
         effect: "NoSchedule"
+
+cacheProfiles:
+  standard-filestore:
+    sharedFilesystem:
+      storageClassName: "nfs-client"
 
 modelAutoscaling:
   # Interval that the autoscaler will scrape model server metrics.
@@ -153,7 +162,7 @@ openwebui:
     enabled: true
     className: "nginx"
     hosts:
-      - host: openwebui.${ip}.nip.io
+      - host: owui.k3s.lab.keh.zone
         paths:
           - path: /
             pathType: ImplementationSpecific

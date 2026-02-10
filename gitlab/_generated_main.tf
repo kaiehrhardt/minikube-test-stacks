@@ -7,11 +7,11 @@ provider "kubernetes" {
   host                   = module.mk.host
 }
 provider "helm" {
-  kubernetes {
+  kubernetes = {
+    host                   = module.mk.host
     client_certificate     = module.mk.client_certificate
     client_key             = module.mk.client_key
     cluster_ca_certificate = module.mk.cluster_ca_certificate
-    host                   = module.mk.host
   }
 }
 module "mk" {

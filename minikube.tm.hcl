@@ -8,7 +8,7 @@ generate_hcl "_generated_main.tf" {
       cluster_ca_certificate = module.mk.cluster_ca_certificate
     }
     provider "helm" {
-      kubernetes {
+      kubernetes = {
         host = module.mk.host
 
         client_certificate     = module.mk.client_certificate
