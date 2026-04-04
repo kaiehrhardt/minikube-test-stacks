@@ -19,14 +19,14 @@ variable "mk_ip" {
   type = string
 }
 
-data "kubernetes_secret" "gitlab_ca" {
+data "kubernetes_secret_v1" "gitlab_ca" {
   metadata {
     name = "gitlab-wildcard-tls-ca"
     namespace = "gitlab"
   }
 }
 
-data "kubernetes_secret" "gitlab_cert" {
+data "kubernetes_secret_v1" "gitlab_cert" {
   metadata {
     name = "gitlab-wildcard-tls"
     namespace = "gitlab"
@@ -34,17 +34,17 @@ data "kubernetes_secret" "gitlab_cert" {
 }
 
 resource "local_file" "ca" {
-  content  = data.kubernetes_secret.gitlab_ca.data.cfssl_ca
+  content  = data.kubernetes_secret_v1.gitlab_ca.data.cfssl_ca
   filename = "${path.module}/ca.pem"
 }
 
 resource "local_file" "cert" {
-  content  = data.kubernetes_secret.gitlab_cert.data["tls.crt"]
+  content  = data.kubernetes_secret_v1.gitlab_cert.data["tls.crt"]
   filename = "${path.module}/cert.pem"
 }
 
 resource "local_file" "key" {
-  content  = data.kubernetes_secret.gitlab_cert.data["tls.key"]
+  content  = data.kubernetes_secret_v1.gitlab_cert.data["tls.key"]
   filename = "${path.module}/cert.key"
 }
 
