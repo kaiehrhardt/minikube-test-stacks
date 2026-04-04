@@ -22,7 +22,8 @@ nginx-ingress:
 prometheus:
   install: false
 gitlab-runner:
-  install: false
+  install: true
+  certsSecretName: gitlab-wildcard-tls-chain
 # Reduce replica counts, reducing CPU & memory requirements
 gitlab:
   webservice:
