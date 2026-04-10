@@ -1,12 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": [
-    "config:base"
-  ],
+  "extends": ["config:best-practices"],
+  "separateMultipleMajor": false,
+  "rangeStrategy": "pin",
   "packageRules": [
     {
-      "matchUpdateTypes": ["minor","patch"],
+      "description": "Group all dependencies together",
+      "groupName": "all dependencies",
+      "groupSlug": "all",
+      "matchPackageNames": ["*"],
+      "schedule": ["before 3am on Monday", "before 3am on Thursday"],
+      "matchUpdateTypes": ["patch", "minor"],
       "automerge": true
     }
-  ]
+  ],
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "labels": ["dependencies"],
+  "assignees": ["kaiehrhardt"],
+  "reviewers": ["kaiehrhardt"]
 }
